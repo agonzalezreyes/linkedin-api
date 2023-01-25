@@ -22,14 +22,14 @@ def get_version() -> str:
 
 
 setuptools.setup(
-    name="linkedin_api",
+    name="linkedin_api_no_cookie",
     version=get_version(),
-    author="Tom Quirk",
-    author_email="tomquirkacc@gmail.com",
+    author="Alejandrina Gonzalez",
+    author_email="me@alejandrina.me",
     description="Python wrapper for the Linkedin API",
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
-    url="https://github.com/tomquirk/linkedin-api",
+    url="https://github.com/agonzalezreyes/linkedin-api",
     license="MIT",
     packages=setuptools.find_packages(),
     install_requires=["requests", "beautifulsoup4", "lxml"],
