@@ -59,6 +59,8 @@ class Client(object):
         self.logger = logger
         self.metadata = {}
         self.use_cookies = use_cookies
+        self._use_cookie_cache = False
+        self._cookie_repository = None
         if use_cookies:
             self._use_cookie_cache = not refresh_cookies
             self._cookie_repository = CookieRepository(cookies_dir=cookies_dir)
