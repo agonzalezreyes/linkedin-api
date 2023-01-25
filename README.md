@@ -31,19 +31,11 @@ Before using this project, please consult the [Terms and Conditions](#terms-and-
 
 > ⚠️ Python >= 3.6 required
 
-To install the package with the latest changes in this repo
+PyPI version:
 
 ```bash
-pip3 install git+https://github.com/tomquirk/linkedin-api.git
+pip3 install linkedin-api-no-cookie==1.0.0
 ```
-
-To install PyPI version:
-
-```bash
-pip3 install linkedin-api~=2.0.0a
-```
-
-> [Why v2.0.0a?](#versioning-note)
 
 ### Example usage
 
@@ -216,7 +208,4 @@ This project violates Linkedin's User Agreement Section 8.2, and because of this
 
 ## Versioning Note
 
-**Tl;dr:** Don't use anything < v2.0.0a.
-
-Releases/tags for this package have not been kept up to date with changes and thus versions (like v1.0.0) are misleading and do not represent "stability".
-Eventually, v2.0.0 will be the "stable" release.
+This is version 1.0.0

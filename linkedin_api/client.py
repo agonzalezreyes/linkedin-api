@@ -50,7 +50,7 @@ class Client(object):
     }
 
     def __init__(
-        self, *, debug=False, refresh_cookies=False, proxies={}, cookies_dir=None
+        self, *, debug=False, refresh_cookies=False, proxies={}, cookies_dir=None, use_cookies=False
     ):
         self.session = requests.session()
         self.session.proxies.update(proxies)
@@ -58,8 +58,10 @@ class Client(object):
         self.proxies = proxies
         self.logger = logger
         self.metadata = {}
-        self._use_cookie_cache = not refresh_cookies
-        self._cookie_repository = CookieRepository(cookies_dir=cookies_dir)
+        self.use_cookies = use_cookies
+        if use_cookies:
+            self._use_cookie_cache = not refresh_cookies
+            self._cookie_repository = CookieRepository(cookies_dir=cookies_dir)
 
         logging.basicConfig(level=logging.DEBUG if debug else logging.INFO)
 
@@ -92,13 +94,13 @@ class Client(object):
     def authenticate(self, username, password):
         if self._use_cookie_cache:
             self.logger.debug("Attempting to use cached cookies")
-            cookies = self._cookie_repository.get(username)
-            if cookies:
-                self.logger.debug("Using cached cookies")
-                self._set_session_cookies(cookies)
-                self._fetch_metadata()
-                return
-
+            if self.use_cookies:
+                cookies = self._cookie_repository.get(username)
+                if cookies:
+                    self.logger.debug("Using cached cookies")
+                    self._set_session_cookies(cookies)
+                    self._fetch_metadata()
+                    return
         self._do_authentication_request(username, password)
         self._fetch_metadata()
 
@@ -108,12 +110,19 @@ class Client(object):
 
         Store this data in self.metadata
         """
-        res = requests.get(
-            f"{Client.LINKEDIN_BASE_URL}",
-            cookies=self.session.cookies,
-            headers=Client.AUTH_REQUEST_HEADERS,
-            proxies=self.proxies,
-        )
+        if self.use_cookies:
+            res = requests.get(
+                f"{Client.LINKEDIN_BASE_URL}",
+                cookies=self.session.cookies,
+                headers=Client.AUTH_REQUEST_HEADERS,
+                proxies=self.proxies,
+            )
+        else: 
+            res = requests.get(
+                f"{Client.LINKEDIN_BASE_URL}",
+                headers=Client.AUTH_REQUEST_HEADERS,
+                proxies=self.proxies,
+            )
 
         soup = BeautifulSoup(res.text, "lxml")
 
@@ -140,21 +149,34 @@ class Client(object):
 
         Return a session object that is authenticated.
         """
-        self._set_session_cookies(self._request_session_cookies())
+        if self.session.cookies:
+            self._set_session_cookies(self._request_session_cookies())
 
-        payload = {
-            "session_key": username,
-            "session_password": password,
-            "JSESSIONID": self.session.cookies["JSESSIONID"],
-        }
+            payload = {
+                "session_key": username,
+                "session_password": password,
+                "JSESSIONID": self.session.cookies["JSESSIONID"],
+            }
 
-        res = requests.post(
-            f"{Client.LINKEDIN_BASE_URL}/uas/authenticate",
-            data=payload,
-            cookies=self.session.cookies,
-            headers=Client.AUTH_REQUEST_HEADERS,
-            proxies=self.proxies,
-        )
+            res = requests.post(
+                f"{Client.LINKEDIN_BASE_URL}/uas/authenticate",
+                data=payload,
+                cookies=self.session.cookies,
+                headers=Client.AUTH_REQUEST_HEADERS,
+                proxies=self.proxies,
+            )
+        else:
+            payload = {
+                "session_key": username,
+                "session_password": password,
+            }
+
+            res = requests.post(
+                f"{Client.LINKEDIN_BASE_URL}/uas/authenticate",
+                data=payload,
+                headers=Client.AUTH_REQUEST_HEADERS,
+                proxies=self.proxies,
+            )
 
         data = res.json()
 
@@ -167,5 +189,6 @@ class Client(object):
         if res.status_code != 200:
             raise Exception()
 
-        self._set_session_cookies(res.cookies)
-        self._cookie_repository.save(res.cookies, username)
+        if self.use_cookies:
+            self._set_session_cookies(res.cookies)
+            self._cookie_repository.save(res.cookies, username)
