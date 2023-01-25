@@ -1,20 +1,4 @@
-# linkedin_api
-
-<h3 align="center">Sponsors</h3>
-
-<p align="center">
-  <a href="https://iscraper.io/" target="_blank">
-    <img width="150px" src="./assets/logos/iscraper.png" alt="serpsbot">
-  </a>
-
-  <a href="https://www.piloterr.com/?ref=tomquirk" target="_blank">
-    <img width="150px" src="./assets/logos/piloterr.png" alt="piloterr">
-  </a>
-</p>
-
-<h5 align="center"><a href="https://github.com/sponsors/tomquirk/sponsorships?sponsor=tomquirk&tier_id=96653&preview=false" target="_blank">Become a sponsor</a></h5>
-
----
+# Unofficial Linkedin API
 
 👨‍💼 Linkedin API for Python
 
@@ -34,7 +18,7 @@ Before using this project, please consult the [Terms and Conditions](#terms-and-
 PyPI version:
 
 ```bash
-pip3 install linkedin-api-no-cookie==1.0.0
+pip3 install linkedin-api-no-cookie==1.0.1
 ```
 
 ### Example usage
@@ -208,4 +192,4 @@ This project violates Linkedin's User Agreement Section 8.2, and because of this
 
 ## Versioning Note
 
-This is version 1.0.0
+This is version 1.0.1
